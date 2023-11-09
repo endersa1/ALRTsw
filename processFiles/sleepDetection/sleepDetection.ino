@@ -36,7 +36,7 @@ void loop() {
 
     switch(state) {
         case IDLE:
-        // if(user is falling asleep && band is not in cofig )
+        // if(user is falling asleep && band is not in cofig ) ---------use python algorithm
         //      state = VIBRATE
 
             break;
