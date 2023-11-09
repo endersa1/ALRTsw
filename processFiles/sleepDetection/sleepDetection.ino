@@ -1,9 +1,15 @@
+#inlcude "readACC.h"
+//put in same folder/arudino project as readACC
+//accM = accelerometer
 enum State {IDLE, VIBRATE, SHOCK};
 
 State state = IDLE;
 
 void setup() {
   // hardware stuff 
+  
+  //accelerometer init
+  mma.setRange(MMA8451_RANGE_2_G);
 }
 
 bool shakeDetected() {
@@ -33,6 +39,12 @@ bool shakeDetected() {
 // source: https://learn.adafruit.com/circuit-playground-d6-dice/shake-detect
 
 void loop() {
+	//read accM
+	mma.read();
+	mma.getEvent(&event);
+	dat.X = event.acceleration.x;
+	dat.Y = event.acceleration.y;
+	dat.Z = event.acceleration.z;
 
     switch(state) {
         case IDLE:
