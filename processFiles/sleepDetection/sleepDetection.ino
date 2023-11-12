@@ -1,4 +1,4 @@
-#inlcude "readACC.h"
+#include "readACC.h"
 //put in same folder/arudino project as readACC
 //accM = accelerometer
 enum State {IDLE, VIBRATE, SHOCK};
@@ -6,8 +6,12 @@ enum State {IDLE, VIBRATE, SHOCK};
 State state = IDLE;
 
 void setup() {
-  // hardware stuff 
-  
+  //  vibrator 
+  pinMode(12, OUTPUT);
+  // shock chg
+  pinMode(8, OUTPUT);
+  // shock dls 
+  pinMode(16, OUTPUT);
   //accelerometer init
   mma.setRange(MMA8451_RANGE_2_G);
 }
@@ -19,10 +23,10 @@ bool shakeDetected() {
   
   // average the accel data of 10 instances 
   for(int i = 0; i < 10; i++){
-    accelData data = readACC();
-    X += dat.X;
-    Y += dat.Y;
-    Z +=  dat.Z;/      delay(1);
+	  mma.getEvent(&event);
+    X += event.acceleration.x;
+    Y += event.acceleration.y;
+    Z += event.acceleration.z;
   }
 
   X = X / 10;
@@ -39,34 +43,31 @@ bool shakeDetected() {
 // source: https://learn.adafruit.com/circuit-playground-d6-dice/shake-detect
 
 void loop() {
-	//read accM
-	mma.read();
-	mma.getEvent(&event);
-	dat.X = event.acceleration.x;
-	dat.Y = event.acceleration.y;
-	dat.Z = event.acceleration.z;
+    mma.read();
+    // Not sure if this is in the right place
+    string sleepSate = Serial.readString();
+    // will have to get this from the user somehow (bluetooth connection?)
+    // string config;
 
     switch(state) {
         case IDLE:
-        // if(user is falling asleep && band is not in cofig ) ---------use python algorithm
-        //      state = VIBRATE
+          // add config condition later 
+          if(sleepState)
+            state = VIBRATE;
 
-            break;
+          break;
 
         case VIBRATE:
-        // vibrate (hardware)
-        // delay(10000); -> 10000 milliseconds = 10 seconds
-        // if(shakeDetected())
-        //     state = IDLE
-        // else
-        //     state = SHOCK
+          digitalWrite(12, HIGH);
+          digitalWrite(8, HIGH);
+          if(shakeDetected()){ state = IDLE; }
+          else { state = SHOCK;}
+          break;
 
-            break;
         case SHOCK:
-        // shock (hardware)
-        // delay(10000); -> 10000 milliseconds = 10 seconds
-        // if(shakeDetected)
-        //     state = IDLE
-            break;
+          digitalWrite(8, LOW);
+          digitalWrite(16, HIGH);
+          if(shakeDetected) { state = IDLE; }  
+          break;
     }
 }

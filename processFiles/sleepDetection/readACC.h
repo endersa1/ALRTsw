@@ -13,12 +13,3 @@ struct accelData {
 sensors_event_t event;
 
 accelData dat;
-
-/*Thinking about using a class to handle (recent) memory of accM's movement
-class accHandlr
-{
-public:
-	const int maxMemory;
-	accelData pos[maxMemory];
-
-}*/
