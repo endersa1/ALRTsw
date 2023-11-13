@@ -16,7 +16,7 @@ public:
 
 Shocker(int cPin, dPin)
     : chargePin(cPin), dischargePin(dPin) {
-    pinMode(chargePin, INPUT); pinMode(dischargePin, INPUT);}
+    pinMode(chargePin, OUTPUT); pinMode(dischargePin, OUTPUT);}
     
 void setupShocker(); //hardware setup
 void set();
