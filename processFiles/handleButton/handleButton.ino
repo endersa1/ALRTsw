@@ -1,22 +1,52 @@
 #include "button.h"
 #include "Arduino.h"
+enum bState {ONE, RAPID, HOLD, REST};
+const int buttonPin = 13;
 
 void setupButton() {
 
-  //hardware
+  Button(buttonPin);
   
 }
 
 void readButton() {
 
-  //implement interrupt?
+  int buttonState = digitalRead(buttonPin);
 
-}
+  if (buttonState != state) {
+      // Debounce
+      if (millis() - lastChangeTime > debounceDelay) {
+        state = buttonState;
+        lastChangeTime = millis();
 
-void handleButton() {
-  
-}
+        if (state == HIGH) {
+          // Button pressed
+          isPressed = true;
+        } else {
+          // Button released
+          isPressed = false;
+          //check for click
+          if (millis() - lastChangeTime > clickThreshold) {
+            numclicks++;
+            if(numclicks > 3) {
+              bstate = RAPID;
+            }
+          }
+        }
+      }
+
+
+  //check held
+  if (isPressed && millis() - lastChangeTime > holdThreshold) {
+      bstate = HOLD;
+  } else if (millis() - lastChangeTime > holdThreshold) {
+      bstate = REST;
+      numclicks = 0;
+  }
+
+
+  }
 
 bState getState() {
-  return 
+  return bstate;
 }
