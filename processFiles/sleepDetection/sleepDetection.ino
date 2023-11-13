@@ -5,13 +5,7 @@ enum State {IDLE, VIBRATE, SHOCK};
 
 State state = IDLE;
 
-void setup() {
-  //  vibrator 
-  pinMode(12, OUTPUT);
-  // shock chg
-  pinMode(8, OUTPUT);
-  // shock dls 
-  pinMode(16, OUTPUT);
+void setupSensors() {
   //accelerometer init
   mma.setRange(MMA8451_RANGE_2_G);
 }
@@ -21,7 +15,7 @@ bool shakeDetected() {
   double Y = 0;
   double Z = 0;
   
-  // average the accel data of 10 instances 
+  // average the accel data of 10 instances - change to account for class memory
   for(int i = 0; i < 10; i++){
 	  mma.getEvent(&event);
     X += event.acceleration.x;
@@ -42,10 +36,10 @@ bool shakeDetected() {
 }
 // source: https://learn.adafruit.com/circuit-playground-d6-dice/shake-detect
 
-void loop() {
+void sleepDetectionLoop() {
     mma.read();
     // Not sure if this is in the right place
-    string sleepSate = Serial.readString();
+    string sleepSate = Serial.readString(); //int?
     // will have to get this from the user somehow (bluetooth connection?)
     // string config;
 
@@ -54,20 +48,19 @@ void loop() {
           // add config condition later 
           if(sleepState)
             state = VIBRATE;
-
           break;
 
         case VIBRATE:
-          digitalWrite(12, HIGH);
-          digitalWrite(8, HIGH);
           if(shakeDetected()){ state = IDLE; }
           else { state = SHOCK;}
           break;
 
         case SHOCK:
-          digitalWrite(8, LOW);
-          digitalWrite(16, HIGH);
           if(shakeDetected) { state = IDLE; }  
           break;
     }
+}
+
+State getState() {
+  return state;
 }
