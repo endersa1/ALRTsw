@@ -24,9 +24,9 @@ public:
 
 Button(int buttonPin, unsigned long debounce = 50, unsigned long clickTime = 500, unsigned long holdTime = 1000)
     : pin(buttonPin), debounceDelay(debounce), clickThreshold(clickTime), holdThreshold(holdTime), isPressed(false) {
-    pinMode(pin, INPUT);
-    
-void setupButton(); //hardware setup
+    pinMode(pin, INPUT); }
+
+void setupButton();
 void readButton();
 bState getState();
 
