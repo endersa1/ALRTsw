@@ -15,7 +15,7 @@ void readButton() {
 
   if (buttonState != state) {
       // Debounce
-      if (millis() - lastChangeTime > debounceDelay) {
+      if (millis() - lastChangeTime > debounceDelay) { //ie not an error / noise
         state = buttonState;
         lastChangeTime = millis();
 
@@ -27,6 +27,8 @@ void readButton() {
           isPressed = false;
           //check for click
           if (millis() - lastChangeTime > clickThreshold) {
+            //later - on function here
+            //account clicks for rapid clicking
             numclicks++;
             if(numclicks > 3) {
               bstate = RAPID;
@@ -34,14 +36,14 @@ void readButton() {
           }
         }
       }
-
-
-  //check held
-  if (isPressed && millis() - lastChangeTime > holdThreshold) {
+  } else {
+    //check held
+    if (isPressed && millis() - lastChangeTime > holdThreshold) {
       bstate = HOLD;
-  } else if (millis() - lastChangeTime > holdThreshold) {
+    } else if (millis() - lastChangeTime > holdThreshold) {
       bstate = REST;
       numclicks = 0;
+    }
   }
 
 
