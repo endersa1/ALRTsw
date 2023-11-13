@@ -1,8 +1,8 @@
-
+#include "Arduino.h"
 
 class vibrator {
     public:
-    
+
     void setupVibrator {
         pinMode(12, OUTPUT);
     }

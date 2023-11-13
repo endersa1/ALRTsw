@@ -51,6 +51,8 @@ void loop() {
             break;
         case VIBRATE:
             //set shocker to 0 and implement vibrating
+            // shocker set should be separated into 
+            // charge and discharge so we can control delay
             vibrator.set(1);
             shocker.set(0);
             break;

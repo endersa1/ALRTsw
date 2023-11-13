@@ -1,4 +1,4 @@
-
+#include "Arduino.h"
 
 class shocker {
     public:
