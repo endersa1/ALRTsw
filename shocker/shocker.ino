@@ -3,27 +3,34 @@
 const int chargePin = 8;
 const int dischargePin = 16;
 
-void setupShocker() {
+void Shocker::setupShocker() {
   // put your setup code here, to run once:
 
   Shocker(chargePin, dischargePin);
 
 }
 
-void set(int i) {
-  switch(i) {
-    case 0: {
-      //turn shocker off completely
-
-      
-      break;
-    }
-    case 1: {
-      //turn/keep shocker on
-
-      
-      break;
-    }
+void Shocker::charge(bool on) {
+  if(on){
+      digitalWrite(chargePin, HIGH);
+  }
+  else { 
+      digitalWrite(chargePin, LOW);
   }
 
+}
+
+void Shocker::discharge(bool on) {
+  if(on){
+      digitalWrite(dischargePin, HIGH);
+  }
+  else { 
+      digitalWrite(dischargePin, LOW);
+  }
+}
+
+void Shocker::off() {
+  digitalWrite(dischargePin, LOW);
+  digitalWrite(chargePin, LOW);
+  
 }

@@ -47,24 +47,23 @@ void loop() {
         case IDLE:
             //set vibrator and shocker to 0
             vibrator.set(0);
-            shocker.charge(0);
-            shocker.discharge(0);
+            shocker.off();
             break;
         case VIBRATE:
             //set shocker to 0 and implement vibrating
             // shocker set should be separated into 
             // charge and discharge so we can control delay
             vibrator.set(1);
-            shocker.charge(0);
-            shocker.discharge(0);
+            shocker.off();
             break;
         case SHOCK:
             //set vibrator to 0 and implement shocking
             vibrator.set(0);
             shocker.charge(1);
-            delay(10000); // delay depeding on what level shock we want to discharge
+            delay(10); // delay depeding on what level shock we want to discharge
             shocker.charge(0);
             shocker.discharge(1);
+            delay(5);
             shocker.discharge(0);
             break;
     }

@@ -6,20 +6,21 @@
 #include "Arduino.h"  // Include necessary libraries
 
 class Shocker () {
-  
 private:
-
-int chargePin;
-int dischargePin;
+    int chargePin;
+    int dischargePin;
 
 public:
-
-Shocker(int cPin, dPin)
-    : chargePin(cPin), dischargePin(dPin) {
-    pinMode(chargePin, OUTPUT); pinMode(dischargePin, OUTPUT);}
-    
-void setupShocker(); //hardware setup
-void set();
+    Shocker(int cPin, int dPin)
+        : chargePin(cPin), dischargePin(dPin) {
+        pinMode(chargePin, OUTPUT); 
+        pinMode(dischargePin, OUTPUT);
+    }
+        
+    void setupShocker(); //hardware setup
+    void charge(); 
+    void discharge();
+    void off();
 
 }
 
