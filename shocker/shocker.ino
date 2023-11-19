@@ -1,30 +1,21 @@
-#include "shocker.h"
+#include "C:/ALRT/ALRT/shocker.h/shocker.h.ino"
 #include "Arduino.h"
 
-Shocker::Shocker() {
-  pinMode(chargePin, OUTPUT); 
-  pinMode(dischargePin, OUTPUT);
-}
-
-void Shocker::charge(bool on) {
-  if(on){
-      digitalWrite(chargePin, HIGH);
+void Shocker::set(bool on) {
+  if (on == 0) {
+    digitalWrite(dischargePin, LOW);
+    digitalWrite(chargePin, LOW);
+    state = 0;
+    return;
   }
-  else { 
-      digitalWrite(chargePin, LOW);
-  }
-}
-
-void Shocker::discharge(bool on) {
-  if(on){
+  if (on != state) { //turns on for first time
+      //start charging 
+      state = 1;
+      chargeStartTime = millis();
+  } else if (millis() - chargeStartTime > chargeTime) { //time to discharge 
+      state = 0;
       digitalWrite(dischargePin, HIGH);
-  }
-  else { 
+      delay(dischargeTime); //if this is low enough its ok to keep it here
       digitalWrite(dischargePin, LOW);
   }
-}
-
-void Shocker::off() {
-  digitalWrite(dischargePin, LOW);
-  digitalWrite(chargePin, LOW);
 }

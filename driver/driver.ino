@@ -2,6 +2,8 @@
 
 #include "C:/ALRT/ALRT/button.h/button.h.ino"
 #include "C:/ALRT/ALRT/button/button.ino"
+#include "C:/ALRT/ALRT/shocker.h/shocker.h.ino"
+#include "C:/ALRT/ALRT/shocker/shocker.ino"
 #include "C:/ALRT/ALRT/enums.h/enums.h.ino"
 
 const int butPin = 21;
