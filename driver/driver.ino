@@ -1,3 +1,6 @@
+#include "vibrator.h"
+#include "shocker.h"
+
 enum State {IDLE, VIBRATE, SHOCK};
 enum bState {ONE, RAPID, HOLD, REST};
 
@@ -8,8 +11,8 @@ void setup() {
   sensors.setupSensors();
   button.setupButton();
   battery.setupBattery();
-  vibrator.setupVibrator();
-  shocker.setupShocker();
+  Vibrator vibrator;
+  Shocker shocker;
   LEDs.setupLEDs();
 
 }
@@ -25,13 +28,18 @@ void loop() {
     //kill switch
     //turn off kill switch and vibrator, delay (turn off?)
     vibrator.set(0);
-    shocker.set(0);
+    shocker.off();
     delay(30000); //delays 30 seconds
     
   } else if(button.getState() == HOLD) {
-     //turn on shocker
-     vibrator.set(0);
-     shocker.set(1);
+    //turn on shocker
+    vibrator.set(0);
+    shocker.charge(1);
+    delay(10); // delay depending on what level shock we want to discharge
+    shocker.charge(0);
+    shocker.discharge(1);
+    delay(5); // time to discharge
+    shocker.discharge(0);
   } else {
   //continue reading input
   sensors.readACC();
@@ -51,8 +59,10 @@ void loop() {
             break;
         case VIBRATE:
             //set shocker to 0 and implement vibrating
-            // shocker set should be separated into 
+            // shocker set needs to be separated into 
             // charge and discharge so we can control delay
+            // in this driver. If it's just one function,
+            // we'd have to have delays in the shocker files
             vibrator.set(1);
             shocker.off();
             break;
@@ -63,7 +73,7 @@ void loop() {
             delay(10); // delay depeding on what level shock we want to discharge
             shocker.charge(0);
             shocker.discharge(1);
-            delay(5);
+            delay(5); // time to discharge
             shocker.discharge(0);
             break;
     }

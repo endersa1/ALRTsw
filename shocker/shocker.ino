@@ -1,13 +1,9 @@
 #include "shocker.h"
 #include "Arduino.h"
-const int chargePin = 8;
-const int dischargePin = 16;
 
-void Shocker::setupShocker() {
-  // put your setup code here, to run once:
-
-  Shocker(chargePin, dischargePin);
-
+Shocker::Shocker() {
+  pinMode(chargePin, OUTPUT); 
+  pinMode(dischargePin, OUTPUT);
 }
 
 void Shocker::charge(bool on) {
@@ -17,7 +13,6 @@ void Shocker::charge(bool on) {
   else { 
       digitalWrite(chargePin, LOW);
   }
-
 }
 
 void Shocker::discharge(bool on) {
@@ -32,5 +27,4 @@ void Shocker::discharge(bool on) {
 void Shocker::off() {
   digitalWrite(dischargePin, LOW);
   digitalWrite(chargePin, LOW);
-  
 }

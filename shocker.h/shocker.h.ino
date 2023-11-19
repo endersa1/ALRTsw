@@ -7,21 +7,19 @@
 
 class Shocker () {
 private:
-    int chargePin;
-    int dischargePin;
+    const int chargePin = 8;
+    const int dischargePin = 16;
 
 public:
-    Shocker(int cPin, int dPin)
-        : chargePin(cPin), dischargePin(dPin) {
-        pinMode(chargePin, OUTPUT); 
-        pinMode(dischargePin, OUTPUT);
-    }
-        
-    void setupShocker(); //hardware setup
-    void charge(); 
-    void discharge();
-    void off();
+    // constructor (hardware setup)
+    Shocker();
+    
+    void charge(bool on); 
 
+    void discharge(bool on);
+
+    // kill switch 
+    void off();
 }
 
 #endif // SHOCKER_H
