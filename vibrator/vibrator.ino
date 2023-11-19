@@ -2,11 +2,11 @@
 #include "Arduino.h"
 
 
-Vibrator(){
+Vibrator::Vibrator() {
     pinMode(vibPin, OUTPUT);
 }
 
-void set(bool on) {
+void Vibrator::set(bool on) {
     if(on){
         digitalWrite(vibPin, HIGH);
     }
