@@ -4,6 +4,8 @@
 #include "C:/ALRT/ALRT/button/button.ino"
 #include "C:/ALRT/ALRT/shocker.h/shocker.h.ino"
 #include "C:/ALRT/ALRT/shocker/shocker.ino"
+#include "C:/ALRT/ALRT/sensors.h/sensors.h.ino"
+#include "C:/ALRT/ALRT/sensors/sensors.ino"
 #include "C:/ALRT/ALRT/enums.h/enums.h.ino"
 
 const int butPin = 21;
@@ -47,7 +49,7 @@ void loop() {
     //turn off shocker and vibrator, delay (turn off?)
     shocker.set(0);
     setVibrator(0);
-    delay(30000); //delays 30 seconds
+    delay(30000); //delays 30 seconds - for debugging only
     
   } else if(button.getState() == HOLD) {
     
