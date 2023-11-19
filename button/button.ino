@@ -1,19 +1,16 @@
-#include "button.h"
+#include "C:/ALRT/ALRT/button.h/button.h.ino"
 #include "Arduino.h"
-enum bState {ONE, RAPID, HOLD, REST};
-const int buttonPin = 13;
+#include "C:/ALRT/ALRT/enums.h/enums.h.ino"
 
-void setupButton() {
+void Button::readButton() {
 
-  Button(buttonPin);
-  
-}
-
-void readButton() {
-
-  int buttonState = digitalRead(buttonPin);
+  int buttonState = digitalRead(pin);
 
   if (buttonState != state) {
+     bstate = ONE;
+     state = buttonState;
+     isPressed = buttonState;
+    /*
       // Debounce
       if (millis() - lastChangeTime > debounceDelay) { //ie not an error / noise
         state = buttonState;
@@ -32,10 +29,13 @@ void readButton() {
             numclicks++;
             if(numclicks > 3) {
               bstate = RAPID;
+            } else {
+              bstate = ONE;
             }
           }
         }
       }
+      */
   } else {
     //check held
     if (isPressed && millis() - lastChangeTime > holdThreshold) {
@@ -47,8 +47,8 @@ void readButton() {
   }
 
 
-  }
+}
 
-bState getState() {
+bState Button::getState() {
   return bstate;
 }

@@ -1,107 +1,140 @@
-#include "vibrator.h"
-#include "shocker.h"
 
-enum State {IDLE, VIBRATE, SHOCK};
-enum bState {ONE, RAPID, HOLD, REST};
 
+#include "C:/ALRT/ALRT/button.h/button.h.ino"
+#include "C:/ALRT/ALRT/button/button.ino"
+#include "C:/ALRT/ALRT/enums.h/enums.h.ino"
+
+const int butPin = 21;
+const int LED1_PIN = 1;
+const int LED2_PIN = 4;
+const int LED3_PIN = 6;
+const int LED4_PIN = 5;
+const int cshockPin = 7;
+const int dshockPin = 2;
+const int vibPin = 20;
+const int batPin = 0;
+const int IMUPin =
+const int HRVPin =
+
+//setup button, shocker, sensors
+Button button = Button(butPin);
+Shocker shocker = Shocker(cshockPin, dshockPin);
+Sensors sensors = Sensors(IMUPin, HRVPin);
+  
 void setup() {
-  // put your setup code here, to run once:
-
-  // initialize hardware components
-  sensors.setupSensors();
-  button.setupButton();
-  battery.setupBattery();
-  Vibrator vibrator;
-  Shocker shocker;
-  LEDs.setupLEDs();
-
+  
+  //setup LEDs, vibrator, battery
+  pinMode(LED1_PIN, OUTPUT);
+  pinMode(LED2_PIN, OUTPUT);
+  pinMode(LED3_PIN, OUTPUT);
+  pinMode(LED4_PIN, OUTPUT);
+  pinMode(vibPin, OUTPUT);
+  pinMode(batPin, INPUT);
+  
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
 
-  //read input
   button.readButton();
-
+  
   //button interrupt, skipping ON function
   if(button.getState() == RAPID) {
+    
     //kill switch
-    //turn off kill switch and vibrator, delay (turn off?)
-    vibrator.set(0);
-    shocker.off();
+    //turn off shocker and vibrator, delay (turn off?)
+    shocker.set(0);
+    setVibrator(0);
     delay(30000); //delays 30 seconds
     
   } else if(button.getState() == HOLD) {
-    //turn on shocker
-    vibrator.set(0);
-    shocker.charge(1);
-    delay(10); // delay depending on what level shock we want to discharge
-    shocker.charge(0);
-    shocker.discharge(1);
-    delay(5); // time to discharge
-    shocker.discharge(0);
+    
+     //turn on shocker
+     shocker.set(1);
+     setVibrator(0);
+     
   } else {
-  //continue reading input
+
+  //continue reading input and process
   sensors.readACC();
   sensors.readHRV();
-  battery.readCharge();
-  
-  //process
-  sensors.sleepDetectionLoop();
+  int charge = getCharge();
+  sensors.setState();
   
   //output
   //vibrator and shocker
   switch(sensors.getState()) { //acount for timing
         case IDLE:
             //set vibrator and shocker to 0
-            vibrator.set(0);
-            shocker.off();
+            setVibrator(0);
+            shocker.set(0);
             break;
         case VIBRATE:
             //set shocker to 0 and implement vibrating
-            // shocker set needs to be separated into 
-            // charge and discharge so we can control delay
-            // in this driver. If it's just one function,
-            // we'd have to have delays in the shocker files
-            vibrator.set(1);
-            shocker.off();
+            setVibrator(1);
+            shocker.set(0);
             break;
         case SHOCK:
             //set vibrator to 0 and implement shocking
-            vibrator.set(0);
-            shocker.charge(1);
-            delay(10); // delay depeding on what level shock we want to discharge
-            shocker.charge(0);
-            shocker.discharge(1);
-            delay(5); // time to discharge
-            shocker.discharge(0);
+            setVibrator(0);
+            shocker.set(1);
             break;
     }
 
     //LEDS
-    switch(battery.getCharge()) { //implement interrupt so they are not always on?
-
-        case one:
-            //turn on 1
-            //turn off 2 3 4
-            LEDs.set(1);
-            break;
-        case two:
-            //turn on 1 2
-            //turn off 3 4
-            LEDs.set(2);
-            break;
-        case three:
-            //turn on 1 2 3
-            //turn off 4
-            LEDs.set(3);
-            break;
-        case four:
-            //turn on 1 2 3 4
-            LEDs.set(4);
-            break;
+    if(sensors.isTapped) { //condition for lights to be shown
+      LEDs.set(charge);
     }
+    
   }
-  
 
+ void setLEDs(int num) {
+  switch(num) {
+    case 0:
+      digitalWrite(LED1_PIN, LOW);
+      digitalWrite(LED2_PIN, LOW);
+      digitalWrite(LED3_PIN, LOW);
+      digitalWrite(LED4_PIN, LOW);
+      break;
+    case 1:
+      digitalWrite(LED1_PIN, HIGH);
+      digitalWrite(LED2_PIN, LOW);
+      digitalWrite(LED3_PIN, LOW);
+      digitalWrite(LED4_PIN, LOW);
+      break;
+    case 2:
+      digitalWrite(LED1_PIN, HIGH);
+      digitalWrite(LED2_PIN, HIGH);
+      digitalWrite(LED3_PIN, LOW);
+      digitalWrite(LED4_PIN, LOW);
+   break;
+    case 3:
+      digitalWrite(LED1_PIN, HIGH);
+      digitalWrite(LED2_PIN, HIGH);
+      digitalWrite(LED3_PIN, HIGH);
+      digitalWrite(LED4_PIN, LOW);
+      break;
+    case 4:
+      digitalWrite(LED1_PIN, HIGH);
+      digitalWrite(LED2_PIN, HIGH);
+      digitalWrite(LED3_PIN, HIGH);
+      digitalWrite(LED4_PIN, HIGH);
+      break;
+  }
+ 
 }
+
+void setVibrator(int on) {
+  if (on) {
+    digitalWrite(vibPin, HIGH);
+  } else {
+    digitalWrite(vibPin, LOW);
+  }
+}
+
+int getCharge() {
+  int charge = digitalRead(batPin);
+  // convert to 1 through 4
+  return charge;
+}
+  
