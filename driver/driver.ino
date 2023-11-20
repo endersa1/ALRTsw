@@ -22,7 +22,7 @@ const int HRVPin =
 
 //setup button, shocker, sensors
 Button button = Button(butPin);
-Shocker shocker = Shocker(cshockPin, dshockPin);
+Shocker shocker = Shocker(cshockPin, dshockPin, shockPower);
 Sensors sensors = Sensors(IMUPin, HRVPin);
   
 void setup() {

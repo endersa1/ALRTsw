@@ -2,7 +2,7 @@
 #include "Arduino.h"
 
 void Shocker::set(bool on) {
-  if (on == 0) {
+  if (!on) {
     digitalWrite(dischargePin, LOW);
     digitalWrite(chargePin, LOW);
     state = 0;
