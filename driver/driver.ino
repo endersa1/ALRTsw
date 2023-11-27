@@ -22,7 +22,7 @@ const int HRVPin =
 
 //setup button, shocker, sensors
 Button button = Button(butPin);
-Shocker shocker = Shocker(cshockPin, dshockPin, shockPower);
+Shocker shocker = Shocker(cshockPin, dshockPin);
 Sensors sensors = Sensors(IMUPin, HRVPin);
   
 void setup() {
@@ -60,8 +60,6 @@ void loop() {
   } else {
 
   //continue reading input and process
-  sensors.readACC();
-  sensors.readHRV();
   int charge = getCharge();
   sensors.setState();
   
@@ -86,7 +84,7 @@ void loop() {
     }
 
     //LEDS
-    if(sensors.isTapped) { //condition for lights to be shown
+    if(sensors.isTapped()) { //condition for lights to be shown
       LEDs.set(charge);
     }
     
@@ -136,7 +134,7 @@ void setVibrator(int on) {
   }
 }
 
-int getCharge() {
+int getCharge() { //needs testing
   int charge = digitalRead(batPin);
   // convert to 1 through 4
   return charge;

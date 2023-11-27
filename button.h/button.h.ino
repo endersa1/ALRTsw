@@ -15,15 +15,14 @@ int pin;
 int state;  // HIGH or LOW
 int numclicks = 0;
 unsigned long lastChangeTime;
-unsigned long debounceDelay = 50;
-unsigned long clickThreshold = 500;
+unsigned long debounceDelay = 30;
+unsigned long clickThreshold = 50;
 unsigned long holdThreshold = 1000;
-bool isPressed;
 bState bstate; // ONE, RAPID, HOLD, REST
 
 public:
 
-Button(int buttonPin) : pin(buttonPin), isPressed(false), bstate(REST), lastChangeTime(millis()) { pinMode(pin, INPUT); }
+Button(int buttonPin) : pin(buttonPin), bstate(REST), state(0), lastChangeTime(millis()) { pinMode(pin, INPUT); }
 void readButton();
 bState getState();
 

@@ -28,7 +28,7 @@ public:
 Sensors(int IMUPin, int HRVPin) : aPin(IMUPin), hPin(HRVPin) { pinMode(aPin, INPUT); pinMode(hPin, INPUT); }
 void setState();
 State getState();
-
+bool isTapped();
   
 }
 #endif // SENSORS_H

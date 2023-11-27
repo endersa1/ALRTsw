@@ -3,7 +3,7 @@
 #include "Arduino.h"  // Include necessary libraries
 
 
-void Button::setState() {
+void Sensors::setState() {
 
   //read ACC - add to vectors and clear old data
   mma.read(); //?
@@ -18,8 +18,10 @@ void Button::setState() {
           // add config condition later 
           if(sleepy && millis() - lastShock > restTime) {
             state = VIBRATE;
-            startVibrate = millis(); }
-          else { state = IDLE; }
+            startVibrate = millis(); 
+          } else { 
+            state = IDLE; 
+          }
           break;
 
         case VIBRATE:
@@ -35,6 +37,52 @@ void Button::setState() {
     }
   
   
+}
+
+bool Sensors::isTapped() { //needs tuning
+  bool tap = false;
+  
+  //detect tap
+  int windowSize = 10;  // Adjust the window size based on your application
+  if (Xdata.size() < windowSize) { //error handling for small vectors
+    return false;
+  }
+  double xAvg, yAvg, zAvg;
+  int threshold = 1000;  // Adjust the threshold based on your sensor and sensitivity
+
+  // Update averages
+  double sum = 0;
+  for (int i = Xdata.size() - windowSize; i < Xdata.size(); ++i) {
+    sum += Xdata[i];
+  }
+  xAvg sum / windowSize;
+  sum = 0;
+  for (int i = Ydata.size() - windowSize; i < Ydata.size(); ++i) {
+    sum += Ydata[i];
+  }
+  yAvg = sum / windowSize;
+  sum = 0;
+  for (int i = Zdata.size() - windowSize; i < Zdata.size(); ++i) {
+    sum += Zdata[i];
+  }
+  zAvg = sum / windowSize;
+
+  // Detect tap on X-axis
+  if (abs(Xdata[Xdata.size() - 1] - xAvg) > threshold) {
+    tap = true;
+  }
+
+  // Detect tap on Y-axis
+  if (abs(Ydata[Ydata.size() - 1] - yAvg) > threshold) {
+    tap = true;
+  }
+
+  // Detect tap on Z-axis
+  if (abs(Zdata[Zdata.size() - 1] - zAvg) > threshold) {
+    tap = true;
+  }
+
+  return tap;
 }
 
 bool shakeDetected() {
