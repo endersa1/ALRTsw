@@ -1,0 +1,5 @@
+TODO to improve model:
+-clean data for consistent gaps in acc and hr readings
+-higher epochs
+-standarization (especially of heart rate data)
+-higher stack size (esp has cracked hardware)
