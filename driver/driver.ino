@@ -8,6 +8,9 @@
 #include "C:/ALRT/ALRT/sensors/sensors.ino"
 #include "C:/ALRT/ALRT/enums.h/enums.h.ino"
 
+#include <Wire.h>
+#include <MAX30105.h>
+
 const int butPin = 21;
 const int LED1_PIN = 1;
 const int LED2_PIN = 4;
@@ -17,8 +20,8 @@ const int cshockPin = 7;
 const int dshockPin = 2;
 const int vibPin = 20;
 const int batPin = 0;
-const int IMUPin =
-const int HRVPin =
+const int SDAPin = 8;
+const int SCLPin = 9;
 
 //setup button, shocker, sensors
 Button button = Button(butPin);

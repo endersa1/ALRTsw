@@ -17,12 +17,10 @@ private:
 
 public:
 
-    Shocker(int cshockPin, int dshockPin, int shockPower) 
+    Shocker(int cshockPin, int dshockPin) 
     : chargePin(cshockPin), dischargePin(dsockPin) { 
         pinMode(chargePin, OUTPUT); 
         pinMode(dischargePin, OUTPUT);  
-        // some code to convert shock power to charge time
-        charge time =
     }
     
 

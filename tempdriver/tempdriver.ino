@@ -1,4 +1,4 @@
-
+/*
 
 #include "C:/ALRT/ALRT/button.h/button.h.ino"
 #include "C:/ALRT/ALRT/button/button.ino"
@@ -118,3 +118,89 @@ void loop() {
   
   
   }
+
+
+
+  const int LED1_PIN = 1;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED1_PIN, OUTPUT);
+}
+
+void loop() {
+  Serial.println("hello");
+  digitalWrite(LED1_PIN, HIGH);
+  
+  delay(1000);
+  digitalWrite(LED1_PIN, LOW);
+  delay(1000);
+}  */
+
+
+
+#include <Wire.h>
+#include <MAX30105.h>
+
+MAX30105 particleSensor;
+const int ledPin = 1;  // Change this to the pin where your LED is connected
+
+void setup() {
+  // Initialize the MAX30102 sensor
+  if (!particleSensor.begin()) {
+    while (1); // Halt the program if the sensor is not found
+  }
+
+  // Set up the MAX30102 sensor with default settings
+  particleSensor.setup();
+
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  // Detect and calculate heart rate for 10 seconds
+  unsigned long startTime = millis();
+  unsigned long detectionDuration = 10000;  // 10 seconds
+  unsigned long endTime = startTime + detectionDuration;
+
+  float heartRate = 0.0;
+
+  vector<uint32_t> vr
+
+  while (millis() < endTime) {
+    // Read the red and IR values from the sensor
+    uint32_t redValue = particleSensor.getRed();
+    uint32_t irValue = particleSensor.getIR();
+
+    
+    // Wait for a short duration before reading again
+    delay(300);
+  }
+
+  heartRate = calculateHeartRate(redValue, irValue);
+
+  // Display the calculated heart rate on the LED for the next 10 seconds
+  unsigned long displayDuration = 10000;  // 10 seconds
+  unsigned long displayEndTime = millis() + displayDuration;
+
+  while (millis() < displayEndTime) {
+    // Blink the LED at the same speed as the calculated heart rate
+    if (heartRate > 0) {
+      int blinkDuration = int(60000 / heartRate);  // Convert BPM to milliseconds
+      digitalWrite(ledPin, HIGH);
+      delay(blinkDuration / 2);  // LED on for half of the blink duration
+      digitalWrite(ledPin, LOW);
+      delay(blinkDuration / 2);  // LED off for the other half
+    } else {
+      // No heart rate detected, keep the LED off
+      digitalWrite(ledPin, LOW);
+    }
+  }
+}
+
+float calculateHeartRate(uint32_t redValue, uint32_t irValue) {
+  // Implement your heart rate calculation logic here
+  // This is a simplified example; you may need more complex algorithms for accurate results
+  // For simplicity, I'm just returning a constant value (90 BPM) in this example
+  return 90.0;
+}
