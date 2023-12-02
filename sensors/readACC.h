@@ -1,8 +1,3 @@
-#include <MPU6050.h>
-#include <MPU6050_6Axis_MotionApps20.h>
-#include <MPU6050_9Axis_MotionApps41.h>
-#include <helper_3dmath.h>
-
 #include <Wire.h>
 #include <Adafruit_MMA8451.h>
 #include <Adafruit_Sensor.h>
