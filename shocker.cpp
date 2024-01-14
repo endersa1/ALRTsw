@@ -1,4 +1,4 @@
-#include "C:/ALRT/ALRT/shocker.h/shocker.h.ino"
+#include "shocker.h"
 #include "Arduino.h"
 
 void Shocker::set(bool on) {

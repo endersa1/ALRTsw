@@ -1,4 +1,3 @@
-/*
 
 #include "C:/ALRT/ALRT/button.h/button.h.ino"
 #include "C:/ALRT/ALRT/button/button.ino"
@@ -17,8 +16,7 @@ const int cshockPin = 7;
 const int dshockPin = 2;
 const int vibPin = 20;
 const int batPin = 0;
-//const int IMUPin =
-//const int HRVPin =
+
 
 //setup button, shocker, sensors
 Button button = Button(butPin);
@@ -120,7 +118,7 @@ void loop() {
   }
 
 
-
+/*
   const int LED1_PIN = 1;
 
 void setup() {
@@ -135,7 +133,7 @@ void loop() {
   delay(1000);
   digitalWrite(LED1_PIN, LOW);
   delay(1000);
-}  */
+}  
 
 
 
@@ -204,3 +202,5 @@ float calculateHeartRate(uint32_t redValue, uint32_t irValue) {
   // For simplicity, I'm just returning a constant value (90 BPM) in this example
   return 90.0;
 }
+
+*/

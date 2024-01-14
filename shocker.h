@@ -5,7 +5,7 @@
 
 #include "Arduino.h"  // Include necessary libraries
 
-class Shocker () {
+class Shocker {
 private:
 
     const int chargePin;
@@ -18,7 +18,7 @@ private:
 public:
 
     Shocker(int cshockPin, int dshockPin) 
-    : chargePin(cshockPin), dischargePin(dsockPin) { 
+    : chargePin(cshockPin), dischargePin(dshockPin) { 
         pinMode(chargePin, OUTPUT); 
         pinMode(dischargePin, OUTPUT);  
     }
@@ -26,6 +26,6 @@ public:
 
     void set(bool on); // 1 on 0 off
 
-}
+};
 
 #endif // SHOCKER_H

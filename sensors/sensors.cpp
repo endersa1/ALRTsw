@@ -1,8 +1,9 @@
 #include "sensors.h"
 #include "enums.h"
 #include <Arduino.h>  // Include necessary libraries
-//TODO: XYZ DATA ARE NOT UPDATED!! (seemingly)
 #include <vector>
+
+//////////// nn stuff //////////////
 const int stack = 60;
 double win[stack];
 std::vector<float> popBackFixed(int maxLen, std::vector<float> vec, float data)
@@ -52,7 +53,7 @@ void normByTwos(int n, double win[], NeuralNetwork * NN)
     else NN->getInputBuffer()[i] = (float)(win[i]-mnACC)/(dACC);
   }
 }
-void loadReadings(NeuralNetwork * nn, vector<double> yData, vector<double> xData, vector<double> zData, vector<double> hr)
+void loadReadings(NeuralNetwork * nn, vector<float> yData, vector<float> xData, vector<float> zData, vector<float> hr)
 {//OPTIMIZATION: SOTRE MAGS IN OTHER VEC (assert len==stack) TO SAVE COMP STIME
   if (yData.size() != stack/2) return; //same for all other vecs
   for (int i = 0; i< stack;i++)
@@ -63,17 +64,47 @@ void loadReadings(NeuralNetwork * nn, vector<double> yData, vector<double> xData
   normByTwos(stack, win, nn); //normalizes data then loads onto NN's input buffer
 
 }
-void Sensors::updateState() {
+//////////// end nn stuff //////////////
 
-  //read ACC - add to vectors and clear old data
-  mma.read(); //?
+//returns true when its been a minute, use for updating vectors
+bool Sensors::calculateBPM(int beat) {
+  if(beat) {
+    num++;
+  }
+
+  if (millis() - lastHRVchange > 59500 && millis() - lastHRVchange < 60500) {
+    bpm = num;
+    num = 0;
+    lastHRVchange = millis();
+    return true;
+  } 
+
+  return false;
+
+}
+
+
+
+void Sensors::setState() {
+
+  //read ACC and HRV sensors - add to vectors and clear old data
+  uint32_t irValue = particleSensor.getIR();
+  bool beat = checkForBeat(irValue);
+  bool minute = calculateBPM(beat);
+  int16_t ax, ay, az;
+  mpu.getAcceleration(&ax, &ay, &az);
+
+  //put sensor data into vectors - every minute?
+  Xdata = popBackFixed(30, Xdata, static_cast<float>(ax));
+  Ydata = popBackFixed(30, Ydata, static_cast<float>(ay));
+  Zdata = popBackFixed(30, Zdata, static_cast<float>(az));
+  hrReadings = popBackFixed(30, hrReadings, bpm);
 
   loadReadings(nn, Ydata, Xdata, Zdata, hrReadings);
   //DATA VECTORS ARE OF LENGTH 30 (stack/2) EACH, VEC[0] = OLDEST READING, VEC[VEC.SIZE()-1] = LATEST READING
 
   sleepReadings = popBackFixed(5, sleepReadings, nn->predict());
-	//USE THIS CODE TO UPDATE LAST ITEM IN VECTOR, AND REPLACE FIRST (oldest) WITHOUT CHNAGING LENGTH
-  //read HRV
+	//USE THIS CODE TO UPDATE LAST ITEM IN VECTOR, AND REPLACE FIRST (oldest) WITHOUT CHANGING LENGTH
 
   //sleep detection algorithm
   int sleepy = most(sleepReadings);// 1 yes 0 no
@@ -102,11 +133,6 @@ void Sensors::updateState() {
     }
   
   
-}
-void Sensors::setState(State province)
-{
-  state = province;
-  //should one man (public setter) has all this power? (indirect access to private variable)
 }
 
 bool Sensors::isTapped() { //needs tuning

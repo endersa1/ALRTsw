@@ -1,6 +1,6 @@
-#include "C:/ALRT/ALRT/button.h/button.h.ino"
+#include "button.h"
 #include "Arduino.h"
-#include "C:/ALRT/ALRT/enums.h/enums.h.ino"
+#include "enums.h"
 
 void Button::readButton() {
 
