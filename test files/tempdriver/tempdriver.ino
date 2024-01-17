@@ -1,11 +1,5 @@
-
-#include "C:/ALRT/ALRT/button.h/button.h.ino"
-#include "C:/ALRT/ALRT/button/button.ino"
-//#include "C:/ALRT/ALRT/shocker.h/shocker.h.ino"
-//#include "C:/ALRT/ALRT/shocker/shocker.ino"
-//#include "C:/ALRT/ALRT/sensors.h/sensors.h.ino"
-//#include "C:/ALRT/ALRT/sensors/sensors.ino"
-#include "C:/ALRT/ALRT/enums.h/enums.h.ino"
+#include "button.h"
+#include "enums.h"
 
 const int butPin = 21;
 const int LED1_PIN = 1;
@@ -89,7 +83,7 @@ int getCharge() {
 
 void loop() {
 
-
+ 
   ///////////// test button //////////////////
 
   button.readButton();
@@ -111,6 +105,7 @@ void loop() {
     setLEDs(0);
     setVibrator(0);
   } 
+  
 
   ///////////// end test button //////////////////
   
