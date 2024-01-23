@@ -19,8 +19,8 @@ void setup()
 void loop()
 {
   //guard clause for button
-  if (sensor.isTapped()) sensor.setState(IDLE); //idr what the button was supposed to do tbh
-  else sensor.updateState();
+  if (sensor.isTapped()) sensor.setState(); //idr what the button was supposed to do tbh
+  //else sensor.updateState();
   if (sensor.getState() == SHOCK)
   {
     pinMode(shockPin, HIGH); //"so you have chosen death"

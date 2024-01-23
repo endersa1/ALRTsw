@@ -3,7 +3,6 @@
 
 #ifndef SENSORS_H
 #define SENSORS_H
-
 #include "Arduino.h"  // Include necessary libraries
 #include "enums.h"
 #include <vector>

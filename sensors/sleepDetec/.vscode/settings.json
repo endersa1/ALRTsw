@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "vector": "cpp",
+        "complex": "cpp"
+    },
+    "cmake.sourceDirectory": "C:/Users/chuka/Documents/PlatformIO/Projects/sleepDetec/lib/tfmicro"
+}
