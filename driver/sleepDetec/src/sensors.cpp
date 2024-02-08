@@ -12,16 +12,21 @@ std::vector<float> popBackFixed(int maxLen, std::vector<float> vec, float data)
     Adds item to end of vector, but removes first item if it would get longer than maxLen
     TODO: logic for vectors more than 1 item longer than maxLen
     */
+  Serial.print("In function popBackFixed, vector size is: ");
   if (vec.size() < maxLen) {vec.push_back(data);}
   else {vec.erase(vec.begin()); vec.emplace(vec.end(), data);}
+  Serial.println(vec.size());
   return vec;
 }
 int most(std::vector<float> readings)
 {
   //returns 1 if 4 of last 5 readins is 1
   int count = 0;
+
+  Serial.print("In function most, count is: ");
   for (int i = 0;i<5;i++) if(readings[i] >= 0.5) count++;
   if (count >= 4) return 1;
+  Serial.println(count);
   return 0;
 }
 double magnitude(double x, double y, double z)
@@ -52,6 +57,7 @@ void normByTwos(int n, double win[], NeuralNetwork * NN)
     if(i%2==1) NN->getInputBuffer()[i] = (float)(win[i]-mnHR)/(dHR);
     else NN->getInputBuffer()[i] = (float)(win[i]-mnACC)/(dACC);
   }
+  Serial.println("In function normByTwos, the NN input buffer was loaded");
 }
 void loadReadings(NeuralNetwork * nn, vector<float> yData, vector<float> xData, vector<float> zData, vector<float> hr)
 {//OPTIMIZATION: SOTRE MAGS IN OTHER VEC (assert len==stack) TO SAVE COMP STIME
@@ -61,6 +67,7 @@ void loadReadings(NeuralNetwork * nn, vector<float> yData, vector<float> xData, 
     if (i%2==0) win[i] = magnitude(yData[i], xData[i], zData[i]);
     else win[i] = hr[i];
   }
+  Serial.println("In function loadReadings, finished loading readings");
   normByTwos(stack, win, nn); //normalizes data then loads onto NN's input buffer
 
 }
@@ -73,9 +80,11 @@ bool Sensors::calculateBPM(int beat) {
   }
 
   if (millis() - lastHRVchange > 59500 && millis() - lastHRVchange < 60500) {
+    Serial.print("In calculateBPM function, BPM is: ");
     bpm = num;
     num = 0;
     lastHRVchange = millis();
+    Serial.println(bpm);
     return true;
   } 
 
@@ -99,7 +108,7 @@ void Sensors::setState() {
   Ydata = popBackFixed(30, Ydata, static_cast<float>(ay));
   Zdata = popBackFixed(30, Zdata, static_cast<float>(az));
   hrReadings = popBackFixed(30, hrReadings, bpm);
-
+  Serial.println("In setState, hr and acc vector updated");
   loadReadings(nn, Ydata, Xdata, Zdata, hrReadings);
   //DATA VECTORS ARE OF LENGTH 30 (stack/2) EACH, VEC[0] = OLDEST READING, VEC[VEC.SIZE()-1] = LATEST READING
 
@@ -137,7 +146,7 @@ void Sensors::setState() {
 
 bool Sensors::isTapped() { //needs tuning
   bool tap = false;
-  
+  Serial.println("In isTapped: ");
   //detect tap
   int windowSize = 10;  // Adjust the window size based on your application
   if (Xdata.size() < windowSize) { //error handling for small vectors
@@ -182,6 +191,7 @@ bool Sensors::isTapped() { //needs tuning
 }
 
 bool Sensors::shakeDetected() {
+  Serial.println("In shakeDetected: Shake detected");
   double X = 0;
   double Y = 0;
   double Z = 0;
