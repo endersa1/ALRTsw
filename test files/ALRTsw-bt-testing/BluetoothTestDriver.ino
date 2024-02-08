@@ -3,6 +3,9 @@
 #include "sensors.h"
 #include "enums.h"
 
+// #include <WiFi.h>
+
+
 //Bluetooth includes
 #include <BLEDevice.h>
 #include <BLEServer.h>
@@ -28,6 +31,23 @@ int configStatus = 0; //When configured = 1
 const int settingsArraySize = 4;
 int settingsArray[settingsArraySize];
 
+const int butPin = 21;
+const int LED1_PIN = 1;
+const int LED2_PIN = 4;
+const int LED3_PIN = 6;
+const int LED4_PIN = 5;
+const int cshockPin = 7;
+const int dshockPin = 2;
+const int vibPin = 20;
+const int batPin = 0;
+//const int SDAPin = 8;
+//const int SCLPin = 9;
+unsigned long lastLEDChangeTime = millis();
+
+//setup button, shocker, sensors
+Button button = Button(butPin);
+//Shocker shocker = Shocker(cshockPin, dshockPin);
+Sensors sensors = Sensors();
 
 //Bluetooth Callbacks
 //Bluetooth connect/disconnect processing. Triggered automatically when a connect/disconnect event occurs
@@ -71,8 +91,9 @@ class MyCallbacks: public BLECharacteristicCallbacks {
           // Extract the numeric part and convert it to an integer
           restTimeBetweenShockIdle = atoi(rxValue.substr(3).c_str());
           settingsArray[1] = restTimeBetweenShockIdle;
-          sensors.updateRestTime(restTimeBetweenShockIdle);
-          Serial.println("Rest time between shcok and idle has changed: ", restTimeBetweenShockIdle);
+          //sensors.updateRestTime(restTimeBetweenShockIdle); //Add back
+          Serial.print("Rest time between shock and idle has changed: ");
+          Serial.println(restTimeBetweenShockIdle);
         }
          else if (strncmp(rxValue.c_str(), "SLC", 3) == 0) {
           // Extract the numeric part and convert it to an integer
@@ -127,23 +148,8 @@ void BLEBegin(){
 }
 //End Bluetooth callbacks
 
-const int butPin = 21;
-const int LED1_PIN = 1;
-const int LED2_PIN = 4;
-const int LED3_PIN = 6;
-const int LED4_PIN = 5;
-const int cshockPin = 7;
-const int dshockPin = 2;
-const int vibPin = 20;
-const int batPin = 0;
-//const int SDAPin = 8;
-//const int SCLPin = 9;
-unsigned long lastLEDChangeTime = millis();
 
-//setup button, shocker, sensors
-Button button = Button(butPin);
-//Shocker shocker = Shocker(cshockPin, dshockPin);
-Sensors sensors = Sensors();
+
 
 
 void setupBluetooth() {
@@ -160,14 +166,14 @@ void setupBluetooth() {
 void setup() {
   
   //setup LEDs, vibrator, battery
-  pinMode(LED1_PIN, OUTPUT);
-  pinMode(LED2_PIN, OUTPUT);
-  pinMode(LED3_PIN, OUTPUT);
-  pinMode(LED4_PIN, OUTPUT);
-  pinMode(vibPin, OUTPUT);
-  pinMode(batPin, INPUT);
+  // pinMode(LED1_PIN, OUTPUT);
+  // pinMode(LED2_PIN, OUTPUT);
+  // pinMode(LED3_PIN, OUTPUT);
+  // pinMode(LED4_PIN, OUTPUT);
+  // pinMode(vibPin, OUTPUT);
+  // pinMode(batPin, INPUT);
 
-  Serial.begin(115200);
+  // Serial.begin(115200);
 
   setupBluetooth();
   
@@ -227,23 +233,24 @@ int getCharge() { //needs testing
 void loop() {
 
   ////////////// BLUETOOTH /////////////////////
-
+  // Serial.print("Free Heap: ");
+  // Serial.println(ESP.getFreeHeap());
 
   //int newRestTime = 0;
   //sensors.updateRestTime(newRestTime);
-  if (deviceConnected) {  //If there is a Bluetooth connection, send data
+  if (deviceConnected && pTxCharacteristic != NULL) {  //If there is a Bluetooth connection, send data //Added extra check
     if(incomingValue == "Be"){
       pTxCharacteristic->setValue("This is cool");  //Send string
       pTxCharacteristic->notify();
-      delay(10000); // bluetooth stack will go into congestion, if too many packets are sent
+      delay(5000); // bluetooth stack will go into congestion, if too many packets are sent
       pTxCharacteristic->setValue("DFRobot");  //Send string
       pTxCharacteristic->notify();
-      delay(10000); // bluetooth stack will go into congestion, if too many packets are sent
+      delay(5000); // bluetooth stack will go into congestion, if too many packets are sent
     }
     else{
       pTxCharacteristic->setValue(incomingValue);  //Send string
       pTxCharacteristic->notify();
-      delay(10000);
+      delay(5000);
     }
   }
 
@@ -265,7 +272,7 @@ void loop() {
     //shocker.set(0);
     Serial.println("shock off");
     setVibrator(1);
-    delay(30000); //delays 30 seconds - for debugging only
+    delay(500); //delays 30 seconds - for debugging only
     
   } else if(button.getState() == HOLD) {
     
@@ -276,38 +283,38 @@ void loop() {
      
   } else {
 
-  //continue reading input and process
-  int charge = getCharge();
-  sensors.setState();
+  // //continue reading input and process
+    int charge = getCharge();
+  // sensors.setState();
   
-  //output
-  //vibrator and shocker
-  switch(sensors.getState()) {
-        case IDLE:
-            //set vibrator and shocker to 0
-            setVibrator(0);
-            //shocker.set(0);
-            Serial.println("shock off");
-            break;
-        case VIBRATE:
-            //set shocker to 0 and implement vibrating
-            setVibrator(1);
-            //shocker.set(0);
-            Serial.println("shock off");
-            break;
-        case SHOCK:
-            //set vibrator to 0 and implement shocking
-            setVibrator(0);
-            //shocker.set(1);
-            Serial.println("shock on");
-            break;
-    }
+  // //output
+  // //vibrator and shocker
+  // switch(sensors.getState()) {
+  //       case IDLE:
+  //           //set vibrator and shocker to 0
+  //           setVibrator(0);
+  //           //shocker.set(0);
+  //           Serial.println("shock off");
+  //           break;
+  //       case VIBRATE:
+  //           //set shocker to 0 and implement vibrating
+  //           setVibrator(1);
+  //           //shocker.set(0);
+  //           Serial.println("shock off");
+  //           break;
+  //       case SHOCK:
+  //           //set vibrator to 0 and implement shocking
+  //           setVibrator(0);
+  //           //shocker.set(1);
+  //           Serial.println("shock on");
+  //           break;
+  //   }
 
-    //LEDS
-    if(sensors.isTapped()) { //condition for lights to be shown
-      setLEDs(charge);
-      lastLEDChangeTime = millis();
-    }
+  //   //LEDS
+  //   if(sensors.isTapped()) { //condition for lights to be shown
+  //     setLEDs(charge);
+  //     lastLEDChangeTime = millis();
+  //   }
     
   }
 }
